@@ -338,7 +338,7 @@ export default function Home() {
     }
   }
   function exportReport() {
-    const text = `INSIGHT BI — GROUP 8 BUSINESS PERFORMANCE REPORT\nDataset: ${dataset}\nPeriod: ${s.from || "No data"} to ${s.to || "No data"}\nRegion: ${region}\nCurrency: INR\n\nRevenue: ${currency(s.revenue)}\nRecorded cost: ${currency(s.cost)}\nGross profit: ${currency(s.profit)}\nGross margin: ${percent(s.margin)}\nOrders: ${s.orders}\nAverage order value: ${currency(s.aov)}\n\nRULE-BASED INSIGHTS\n${findings.map((i) => i.title + "\n" + i.text + " " + i.action).join("\n\n")}\n\nSCENARIO (ASSUMPTIONS, NOT A FORECAST)\nPrice ${price}%, volume ${volume}%, unit cost ${costs}%\nProjected revenue: ${currency(projection.revenue)}\nProjected gross profit: ${currency(projection.profit)}\nAll recorded costs scale with volume. Operating costs outside the dataset are excluded.\n${answer ? "\n" + answerMode.toUpperCase() + " RESPONSE\nQuestion: " + asked + "\n" + answer : ""}\n\nMonthly comparisons may include partial months. Validate source data and recommendations before making decisions.`;
+    const text = `INSIGHT BI — GROUP 8 · DIVISION B · BATCH B3 BUSINESS PERFORMANCE REPORT\nDataset: ${dataset}\nPeriod: ${s.from || "No data"} to ${s.to || "No data"}\nRegion: ${region}\nCurrency: INR\n\nRevenue: ${currency(s.revenue)}\nRecorded cost: ${currency(s.cost)}\nGross profit: ${currency(s.profit)}\nGross margin: ${percent(s.margin)}\nOrders: ${s.orders}\nAverage order value: ${currency(s.aov)}\n\nRULE-BASED INSIGHTS\n${findings.map((i) => i.title + "\n" + i.text + " " + i.action).join("\n\n")}\n\nSCENARIO (ASSUMPTIONS, NOT A FORECAST)\nPrice ${price}%, volume ${volume}%, unit cost ${costs}%\nProjected revenue: ${currency(projection.revenue)}\nProjected gross profit: ${currency(projection.profit)}\nAll recorded costs scale with volume. Operating costs outside the dataset are excluded.\n${answer ? "\n" + answerMode.toUpperCase() + " RESPONSE\nQuestion: " + asked + "\n" + answer : ""}\n\nMonthly comparisons may include partial months. Validate source data and recommendations before making decisions.`;
     download("insight-bi-business-report.txt", text);
     setNotice("Business report exported.");
   }
@@ -434,7 +434,8 @@ export default function Home() {
             <span>VM</span>
             <div>
               <strong>Group 8 · Mini project</strong>
-              <small>IT · AI & DS</small>
+              <small>Division B · Batch B3</small>
+              <small>IT (AI & DS)</small>
             </div>
             <span className="student-dot" />
           </div>
@@ -477,7 +478,7 @@ export default function Home() {
           <div className="page-heading">
             <div>
               <div className="eyebrow">
-                <span /> BUSINESS INTELLIGENCE STUDIO
+                <span /> GROUP 8 · DIVISION B · BATCH B3
               </div>
               <h1>{pageTitles[page]}</h1>
               <p>
@@ -1196,7 +1197,7 @@ export default function Home() {
             <div className="guide">
               <section className="guide-hero">
                 <div className="eyebrow">
-                  GROUP 8 · COLLEGE MINI PROJECT · 2026–2027
+                  GROUP 8 · DIVISION B · BATCH B3 · 2026–2027
                 </div>
                 <h2>
                   GenAI-Powered Business Intelligence and Strategic Insight
@@ -1276,7 +1277,9 @@ export default function Home() {
                     incomplete months. Scenarios illustrate assumptions and do
                     not predict demand.
                   </p>
-                  <h3 className="guide-subhead">Group 8 · Project team</h3>
+                  <h3 className="guide-subhead">
+                    Group 8 · Division B · Batch B3
+                  </h3>
                   <p>
                     K.J Somaiya School of Engineering
                     <br />
@@ -1311,8 +1314,8 @@ export default function Home() {
           <footer className="app-footer">
             <span>
               <span className="footer-mark">✳</span> Insight BI{" "}
-              <span className="footer-dot">·</span> Group 8 · Built for better
-              business decisions
+              <span className="footer-dot">·</span> Group 8 · Division B · Batch
+              B3
             </span>
             <span>
               {page === "Project guide"

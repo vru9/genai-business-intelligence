@@ -37,11 +37,11 @@ for name,size in [('Title',27),('Heading 1',21),('Heading 2',14),('Heading 3',12
     st=doc.styles[name];st.font.size=Pt(size);st.font.bold=name!='Title';st.paragraph_format.space_before=Pt(13);st.paragraph_format.space_after=Pt(9)
     st.paragraph_format.keep_with_next=True
 footer=sec.footer.paragraphs[0];footer.alignment=WD_ALIGN_PARAGRAPH.RIGHT
-r=footer.add_run('Insight BI  |  Group 8  |  ');r.font.size=Pt(9);r.font.color.rgb=RGBColor(90,90,90)
+r=footer.add_run('Insight BI  |  Group 8  |  Division B  |  Batch B3  |  ');r.font.size=Pt(9);r.font.color.rgb=RGBColor(90,90,90)
 fld=OxmlElement('w:fldSimple');fld.set(qn('w:instr'),'PAGE');footer._p.append(fld)
 doc.core_properties.title='GenAI Powered Business Intelligence and Strategic Insight Generation System'
 doc.core_properties.author='Vruddhi Mule; Rajdeep Pandey; Sagar Jadhav'
-doc.core_properties.subject='Group 8 college mini project report for academic year 2026–2027'
+doc.core_properties.subject='Group 8 Division B Batch B3 college mini project report for academic year 2026–2027'
 
 def p(text='',bold=False):
     para=doc.add_paragraph();r=para.add_run(text);r.bold=bold;return para
@@ -85,6 +85,7 @@ def picture(path,width=6.55,caption=''):
 # 1 Cover
 p('K.J Somaiya School of Engineering',True).alignment=WD_ALIGN_PARAGRAPH.CENTER
 p('Department of IT (AI & DS)').alignment=WD_ALIGN_PARAGRAPH.CENTER
+p('Division B  |  Batch B3  |  Group 8').alignment=WD_ALIGN_PARAGRAPH.CENTER
 p('Academic year 2026–2027').alignment=WD_ALIGN_PARAGRAPH.CENTER
 p('');p('')
 title=doc.add_paragraph('GenAI Powered Business Intelligence and Strategic Insight Generation System',style='Title');title.alignment=WD_ALIGN_PARAGRAPH.CENTER

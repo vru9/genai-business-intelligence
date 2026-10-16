@@ -1,10 +1,10 @@
-# Insight BI · Group 8
+# Insight BI · Group 8 · Division B · Batch B3
 
 ## GenAI Powered Business Intelligence and Strategic Insight Generation System
 
 A college mini project that turns CSV sales data into business dashboards, grounded explanations, and strategic what-if scenarios.
 
-**Group 8 · K.J Somaiya School of Engineering · IT (AI & DS) · 2026–2027**
+**Group 8 · Division B · Batch B3 · K.J Somaiya School of Engineering · IT (AI & DS) · 2026–2027**
 
 | Team member | Roll number |
 |---|---|
