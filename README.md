@@ -185,12 +185,6 @@ Add `GEMINI_API_KEY` as a secret and `GEMINI_MODEL=gemini-3.5-flash-lite` under 
 
 The current service was created from the public repository URL. Check the Render **Deploys** page after pushing changes; **Manual Deploy → Deploy latest commit** is available when a fresh deployment is needed. The repository's Blueprint requests deployment after CI checks pass.
 
-### Existing public preview
-
-Hosted URL: https://insight-bi-vruddhi.rajdeepvp273.chatgpt.site
-
-The hosted demo is public and can be opened by anyone with the website link. Faculty can also access this public GitHub repository, download the report, and run the app locally. The demo works without a provider key; no production API secret is included in the repository.
-
 ## Academic report
 
 Read [the PDF report](docs/project-report.pdf) or edit [the Word report](docs/project-report.docx). The report distinguishes implemented features, verified results, assumptions, and future work. A successful live Gemini smoke test is recorded separately from formal answer-quality evaluation, which remains future work. No forecasting accuracy is claimed.
