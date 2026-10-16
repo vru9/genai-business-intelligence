@@ -153,7 +153,7 @@ The automated suite has 14 tests covering aggregations, date filtering, CSV pars
 
 Hosted URL: https://insight-bi-vruddhi.rajdeepvp273.chatgpt.site
 
-The hosted deployment is owner-private by default and requires the owner's account. Faculty can access this public GitHub repository, download the report, and run the app locally. Making a hosted demo public requires a separate access change. No production API secret is included in the repository.
+The hosted demo is public and can be opened by anyone with the website link. Faculty can also access this public GitHub repository, download the report, and run the app locally. The demo works without a provider key; no production API secret is included in the repository.
 
 ## Academic report
 
