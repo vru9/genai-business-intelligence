@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 function config() {
   return {
     key: process.env.GEMINI_API_KEY,
-    model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+    model: process.env.GEMINI_MODEL || "gemini-3.5-flash-lite",
   };
 }
 export function GET() {
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
   // Render terminates HTTPS before forwarding to the Node server.
   const url = new URL(request.url);
   const host = request.headers.get("host") || url.host;
-  const protocol = request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1);
+  const protocol =
+    request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1);
   const expectedOrigin = process.env.RENDER_EXTERNAL_URL
     ? new URL(process.env.RENDER_EXTERNAL_URL).origin
     : `${protocol}://${host}`;

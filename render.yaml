@@ -16,6 +16,6 @@ services:
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
       - key: GEMINI_MODEL
-        value: gemini-3.8-flash
+        value: gemini-3.5-flash-lite
 # Add GEMINI_API_KEY as a secret in the Render Environment settings.
 # With no key, the complete demo remains available using labeled rule-based answers.

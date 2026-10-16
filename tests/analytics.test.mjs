@@ -189,3 +189,25 @@ test("AI request validation runs before contacting a provider", async () => {
     /at least one/,
   );
 });
+
+test("a transient provider failure is retried once and returns the generated answer", async () => {
+  let calls = 0;
+  const result = await answerRequest(
+    { question: "summary", rows },
+    "key",
+    "model",
+    async () => {
+      calls++;
+      return calls === 1
+        ? new Response("Unavailable", { status: 503 })
+        : Response.json({
+            candidates: [
+              { content: { parts: [{ text: "Revenue is INR 250." }] } },
+            ],
+          });
+    },
+  );
+  assert.equal(calls, 2);
+  assert.equal(result.mode, "gemini");
+  assert.equal(result.answer, "Revenue is INR 250.");
+});

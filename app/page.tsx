@@ -1376,7 +1376,7 @@ export default function Home() {
           restart the development server.
         </p>
         <pre>
-          GEMINI_API_KEY=your_key_here{"\n"}GEMINI_MODEL=gemini-3.8-flash
+          GEMINI_API_KEY=your_key_here{"\n"}GEMINI_MODEL=gemini-3.5-flash-lite
         </pre>
         <h3>For the hosted app</h3>
         <p>
