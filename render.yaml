@@ -1,0 +1,21 @@
+# Group 8 | Division B | Batch B3 | K.J Somaiya School of Engineering
+services:
+  - type: web
+    name: insight-bi-group8
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm ci --include=dev && npm run build:render
+    startCommand: npm run start:render
+    healthCheckPath: /api/insights
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_VERSION
+        value: 22.18.0
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
+# Add GEMINI_API_KEY as a secret in the Render Environment settings.
+# With no key, the complete demo remains available using labeled rule-based answers.

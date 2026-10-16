@@ -53,7 +53,9 @@ GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-3.8-flash
 ```
 
-`.dev.vars` is ignored by Git. Never put a real key in `.dev.vars.example`, frontend code, screenshots, or commits. On hosted Sites, configure these names as server environment variables. API usage and billing depend on the provider account.
+`.dev.vars` is ignored by Git. Never put a real key in `.dev.vars.example`, frontend code, screenshots, or commits. On Render, add `GEMINI_API_KEY` and `GEMINI_MODEL` in the service's **Environment** settings, then save and redeploy. On Sites, use server environment settings. API usage and billing depend on the provider account. The API key stays on the server.
+
+For the Next.js/Render runtime on your computer, copy `.env.example` to `.env.local` instead. Next.js loads `.env.local`; the Vinext local preview uses `.dev.vars`. Neither secret file is committed.
 
 The browser sends the selected records to this app's backend on an explicit question. The backend validates them and recomputes the metrics. Only the question and calculated summaries go to Gemini. Responses are rendered as text, with no executable model-generated HTML. Dataset labels are treated as untrusted context in the prompt.
 
@@ -100,7 +102,7 @@ flowchart LR
   Gemini --> UI
 ```
 
-The application uses React and TypeScript with Vinext's App Router compatibility, Vite, and Cloudflare Workers. The Sites build integration in `vite.config.ts` prepares hosted deployment. There is no application database or dataset persistence in this version. Unused storage/UI scaffolding comes from the hosting starter.
+The application uses React and TypeScript with Next.js App Router. Render runs the Next.js build as a Node.js web service. The existing Sites preview uses Vinext's App Router compatibility, Vite, and Cloudflare Workers, with the integration in `vite.config.ts`. Both runtimes use the same UI, API route, analytics, and Gemini code. There is no application database or dataset persistence in this version. Unused storage/UI scaffolding comes from the hosting starter.
 
 ## Important files
 
@@ -115,6 +117,8 @@ The application uses React and TypeScript with Vinext's App Router compatibility
 | `docs/project-report.docx` | Editable academic project report |
 | `docs/project-report.pdf` | PDF academic project report |
 | `scripts/build-report.py` | Reproducible report authoring source |
+| `render.yaml` | Free Node web service, build/start commands, health check |
+| `scripts/start-render.mjs` | Next.js server listening on Render's PORT |
 
 ## Calculations
 
@@ -139,6 +143,15 @@ npm start
 
 The automated suite has 14 tests covering aggregations, date filtering, CSV parsing and validation, zero-data behavior, missing months, scenario math, export escaping, size limits, demo answers, mocked Gemini requests, and provider errors. Browser checks include upload, search, region filtering, AI demo responses, scenario adjustment/reset, export, and responsive layout. Live Gemini quality and load testing remain future validation tasks.
 
+For the Render/Node production runtime:
+
+```bash
+npm run build:render
+npm run start:render
+```
+
+The Node server listens on `0.0.0.0` and reads `PORT` (default `10000`). Open `http://localhost:10000` locally. CI checks both hosting builds.
+
 ## Demonstration for faculty
 
 1. Open Overview and explain the four KPIs.
@@ -150,6 +163,25 @@ The automated suite has 14 tests covering aggregations, date filtering, CSV pars
 7. Review the test suite and project report.
 
 ## Hosting and access
+
+### Render deployment
+
+The repository includes `render.yaml` for a **Free** Node web service in Singapore. Connect this repository as a Render Blueprint, or use these settings for a Web Service:
+
+| Setting | Value |
+|---|---|
+| Repository | `https://github.com/vru9/genai-business-intelligence` |
+| Branch | `main` |
+| Runtime | Node |
+| Build command | `npm ci --include=dev && npm run build:render` |
+| Start command | `npm run start:render` |
+| Health check | `/api/insights` |
+| Node version | `22.18.0` |
+| Instance type | Free |
+
+Add `GEMINI_API_KEY` as a secret and `GEMINI_MODEL=gemini-3.8-flash` under **Environment** to enable live AI. After deployment, open **AI insights**, confirm the Gemini mode label, and ask a sample-data question. A configured key still needs valid model access and quota. The no-key demo works immediately. Render's free services sleep after 15 minutes without traffic, so allow time for the first request after inactivity. See [Render's free service documentation](https://render.com/docs/free).
+
+### Existing public preview
 
 Hosted URL: https://insight-bi-vruddhi.rajdeepvp273.chatgpt.site
 

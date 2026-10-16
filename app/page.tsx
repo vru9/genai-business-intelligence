@@ -1210,7 +1210,7 @@ export default function Home() {
                 </p>
                 <div className="guide-tags">
                   <span>React + TypeScript</span>
-                  <span>Vinext + Cloudflare Workers</span>
+                  <span>Next.js on Render · Vinext for Sites</span>
                   <span>Gemini API</span>
                 </div>
               </section>
@@ -1381,8 +1381,8 @@ export default function Home() {
         <h3>For the hosted app</h3>
         <p>
           Set <code>GEMINI_API_KEY</code> and <code>GEMINI_MODEL</code> as
-          server environment variables through Sites. Never place a key in
-          frontend code or commit it to GitHub.
+          server environment variables in Render’s Environment settings (or
+          Sites). Never place a key in frontend code or commit it to GitHub.
         </p>
         <p className="small-note">
           Model availability and API usage limits depend on your Google account.

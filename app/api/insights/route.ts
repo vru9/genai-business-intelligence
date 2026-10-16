@@ -1,10 +1,11 @@
-import { env } from "cloudflare:workers";
 import { answerRequest } from "@/lib/ai";
+
+export const dynamic = "force-dynamic";
+
 function config() {
-  const vars = env as unknown as Record<string, string | undefined>;
   return {
-    key: vars.GEMINI_API_KEY,
-    model: vars.GEMINI_MODEL || "gemini-3.8-flash",
+    key: process.env.GEMINI_API_KEY,
+    model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
   };
 }
 export function GET() {
@@ -16,7 +17,11 @@ export function GET() {
 }
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin)
+  // Render terminates HTTPS before forwarding to the Node server.
+  const expectedOrigin = process.env.RENDER_EXTERNAL_URL
+    ? new URL(process.env.RENDER_EXTERNAL_URL).origin
+    : new URL(request.url).origin;
+  if (origin && origin !== expectedOrigin)
     return Response.json(
       { error: "Cross-origin requests are not supported." },
       { status: 403 },
