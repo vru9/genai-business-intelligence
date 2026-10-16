@@ -26,7 +26,7 @@ A college mini project that turns CSV sales data into business dashboards, groun
 - Downloadable business reports; editable academic project report and PDF.
 - Responsive desktop and mobile layouts, labeled controls, keyboard support.
 
-**Honest AI status:** the default application uses deterministic demo responses. Actual generative AI requires your own Gemini API key and an available model. Live provider calls were not tested without a key. Provider requests and failure handling are tested with mocks. This is not a trained custom ML model, RAG system, or predictive forecasting engine.
+**AI modes:** without a key, the application uses deterministic demo responses. Actual generative AI uses a server-side Gemini API key and an available model. The Render service uses `gemini-3.5-flash-lite`; a live smoke test returned the correct sample revenue (INR 4,941,991), gross profit (INR 1,382,887), and leading category (Electronics). Provider requests, failure handling, and one bounded retry are also tested with mocks. Generated answers still require human verification. This is not a trained custom ML model, RAG system, or predictive forecasting engine.
 
 ## Run locally
 
@@ -45,12 +45,12 @@ Open the local address printed in the terminal (normally `http://127.0.0.1:5173`
 
 1. Obtain a Gemini API key through [Google AI Studio](https://aistudio.google.com/apikey).
 2. Copy `.dev.vars.example` to `.dev.vars` in the project root.
-3. Set `GEMINI_API_KEY` and a model available to your Google account. `GEMINI_MODEL` defaults to `gemini-3.8-flash`, following the current [Generate Content documentation](https://ai.google.dev/api/generate-content). Override it if your account uses another supported model.
+3. Set `GEMINI_API_KEY` and a model available to your Google account. `GEMINI_MODEL` defaults to [`gemini-3.5-flash-lite`](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite). Override it if your account uses another supported model.
 4. Restart the dev server. The interface should show **Gemini connected**.
 
 ```dotenv
 GEMINI_API_KEY=your_key_here
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
 `.dev.vars` is ignored by Git. Never put a real key in `.dev.vars.example`, frontend code, screenshots, or commits. On Render, add `GEMINI_API_KEY` and `GEMINI_MODEL` in the service's **Environment** settings, then save and redeploy. On Sites, use server environment settings. API usage and billing depend on the provider account. The API key stays on the server.
@@ -141,7 +141,7 @@ npm run build
 npm start
 ```
 
-The automated suite has 14 tests covering aggregations, date filtering, CSV parsing and validation, zero-data behavior, missing months, scenario math, export escaping, size limits, demo answers, mocked Gemini requests, and provider errors. Browser checks include upload, search, region filtering, AI demo responses, scenario adjustment/reset, export, and responsive layout. Live Gemini quality and load testing remain future validation tasks.
+The automated suite has 15 tests covering aggregations, date filtering, CSV parsing and validation, zero-data behavior, missing months, scenario math, export escaping, size limits, demo answers, mocked Gemini requests, provider errors, and bounded retry recovery. Browser checks include upload, search, region filtering, AI demo and live Gemini responses, scenario adjustment/reset, export, and responsive layout. One live summary misstated average order value as INR 1,277.52 instead of the calculated INR 1,227.52. Always check generated figures against deterministic dashboard values. Formal answer-quality evaluation and load testing remain future validation tasks.
 
 For the Render/Node production runtime:
 
@@ -166,6 +166,8 @@ The Node server listens on `0.0.0.0` and reads `PORT` (default `10000`). Open `h
 
 ### Render deployment
 
+Public application: [Insight BI on Render](https://insight-bi-group8.onrender.com)
+
 The repository includes `render.yaml` for a **Free** Node web service in Singapore. Connect this repository as a Render Blueprint, or use these settings for a Web Service:
 
 | Setting | Value |
@@ -179,7 +181,9 @@ The repository includes `render.yaml` for a **Free** Node web service in Singapo
 | Node version | `22.18.0` |
 | Instance type | Free |
 
-Add `GEMINI_API_KEY` as a secret and `GEMINI_MODEL=gemini-3.8-flash` under **Environment** to enable live AI. After deployment, open **AI insights**, confirm the Gemini mode label, and ask a sample-data question. A configured key still needs valid model access and quota. The no-key demo works immediately. Render's free services sleep after 15 minutes without traffic, so allow time for the first request after inactivity. See [Render's free service documentation](https://render.com/docs/free).
+Add `GEMINI_API_KEY` as a secret and `GEMINI_MODEL=gemini-3.5-flash-lite` under **Environment** to enable live AI. After deployment, open **AI insights**, confirm the Gemini mode label, and ask a sample-data question. A configured key still needs valid model access and quota. The no-key demo works immediately. Render's free services sleep after 15 minutes without traffic, so allow time for the first request after inactivity. See [Render's free service documentation](https://render.com/docs/free).
+
+The current service was created from the public repository URL. Check the Render **Deploys** page after pushing changes; **Manual Deploy → Deploy latest commit** is available when a fresh deployment is needed. The repository's Blueprint requests deployment after CI checks pass.
 
 ### Existing public preview
 
@@ -189,7 +193,7 @@ The hosted demo is public and can be opened by anyone with the website link. Fac
 
 ## Academic report
 
-Read [the PDF report](docs/project-report.pdf) or edit [the Word report](docs/project-report.docx). The report distinguishes implemented features, verified results, assumptions, and future work. It does not claim live LLM validation or forecasting accuracy.
+Read [the PDF report](docs/project-report.pdf) or edit [the Word report](docs/project-report.docx). The report distinguishes implemented features, verified results, assumptions, and future work. A successful live Gemini smoke test is recorded separately from formal answer-quality evaluation, which remains future work. No forecasting accuracy is claimed.
 
 ## References
 

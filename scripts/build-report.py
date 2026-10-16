@@ -6,6 +6,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from PIL import Image, ImageDraw, ImageFont
 import math
 ROOT=Path(__file__).resolve().parents[1]
@@ -45,6 +46,14 @@ doc.core_properties.subject='Group 8 Division B Batch B3 college mini project re
 
 def p(text='',bold=False):
     para=doc.add_paragraph();r=para.add_run(text);r.bold=bold;return para
+
+def link(para,url):
+    hyperlink=OxmlElement('w:hyperlink')
+    hyperlink.set(qn('r:id'),para.part.relate_to(url,RT.HYPERLINK,is_external=True))
+    run=OxmlElement('w:r');props=OxmlElement('w:rPr')
+    underline=OxmlElement('w:u');underline.set(qn('w:val'),'single');props.append(underline)
+    run.append(props);text=OxmlElement('w:t');text.text=url;run.append(text)
+    hyperlink.append(run);para._p.append(hyperlink)
 
 def h(text,level=1):doc.add_heading(text,level)
 def page(title):doc.add_page_break();h(title)
@@ -101,7 +110,7 @@ page('Abstract and report overview')
 h('Abstract',2)
 p('Insight BI is a web application that transforms structured sales data into business intelligence and strategic explanations. The project addresses the effort required to move from spreadsheet records to an understandable view of revenue, cost, profitability, and performance across business segments. Users can load a sample dataset or upload a CSV, examine a dashboard, ask questions about the selected records, and evaluate business scenarios.')
 p('The system combines deterministic numerical analysis with an optional generative AI layer. A shared TypeScript module computes all business metrics. The server validates the selected records again before sending calculated summaries and a question to the Gemini API. This approach grounds generated explanations in explicit numerical evidence. Without a configured API key, the application uses clearly identified rule-based demo responses, allowing the complete demonstration workflow to run without external model access.')
-p('The implemented prototype includes CSV validation, regional and date filtering, visual summaries, natural-language questions, scenario calculations, and report exports. Fourteen automated tests verify the core calculations and provider contract. Browser checks verify the main user interactions. Live generative output quality has not been evaluated because no provider key was configured during verification. The application is an educational decision-support prototype, not a validated forecasting or autonomous decision-making system.')
+p('The implemented prototype includes CSV validation, regional and date filtering, visual summaries, natural-language questions, scenario calculations, and report exports. Fifteen automated tests verify the core calculations and provider contract. Browser checks verify the main user interactions. Live generative output quality has not been formally evaluated. The application is an educational decision-support prototype, not a validated forecasting or autonomous decision-making system.')
 h('Report contents',2)
 table(['Section','Page'],[['Introduction and objectives','3'],['Requirements and data model','4'],['System architecture','5'],['Analytical methodology','6'],['Implementation and AI integration','7'],['Application dashboard','8'],['Insight generation interface','9'],['Strategy planning interface','10'],['Testing and evaluation','11'],['Deployment and limitations','12'],['Conclusion and references','13']],[5.5,1.05])
 
@@ -119,7 +128,7 @@ p('The prototype analyzes a single dataset in Indian rupees and supports up to 1
 # 4
 page('Requirements and data model')
 h('Software and execution requirements',2)
-p('Local execution requires Node.js 22.13 or newer, npm, and a modern browser. React and TypeScript implement the interface; Vinext and Vite provide the application build and development server. Server routes run in a Cloudflare Workers-compatible environment. Gemini access is optional and requires an API key and a supported model in the provider account. No application database is required.')
+p('Local execution requires Node.js 22.13 or newer, npm, and a modern browser. React and TypeScript implement the interface. Render hosts the Next.js production build as a Node.js web service. The original Sites preview uses Vinext, Vite, and Cloudflare Workers with the same application code. Gemini requires a server API key and an available model. No application database is required.')
 h('CSV schema',2)
 table(['Field','Type','Validation or meaning'],[['date','Date text','A real YYYY-MM-DD date between 1900 and 2100'],['category','Text','Required business category, 1–80 characters'],['region','Text','Required geographic segment, 1–80 characters'],['channel','Text','Optional column; absent values default to Direct'],['revenue','Number','Non-negative amount in Indian rupees'],['cost','Number','Non-negative cost using a consistent accounting definition'],['orders','Integer','Non-negative order count summed across records']],[1.05,1,4.5])
 h('Data quality controls',2)
@@ -157,12 +166,12 @@ page('Implementation and AI integration')
 h('Application modules',2)
 table(['Module','Implementation responsibility'],[['app/page.tsx','Navigation, dashboard, data explorer, insight questions, strategy controls, and project guide'],['lib/analytics.ts','CSV parser, validation, synthetic sample generator, filtering, grouping, scenario math, and demo answers'],['lib/ai.ts','Provider request construction, model selection, response parsing, and error handling'],['app/api/insights/route.ts','HTTP boundary, server environment configuration, request checks, and responses'],['app/globals.css','Responsive layout, visual states, keyboard focus, and reduced-motion styling']],[2.15,4.4])
 h('Prompt construction and grounding',2)
-p('The backend builds a JSON context containing the question and computed summary. A system instruction requires the model to use supplied metrics, identify relevant periods and metric names, avoid invented values or causal claims, distinguish observations from hypotheses, and acknowledge missing information. Currency is INR, and profit is explicitly defined as gross profit from the cost column. Temperature is set to 0.25 to encourage restrained responses; this does not guarantee factual correctness.')
+p('The backend sends the question and computed summary as JSON. The system instruction requires supplied metrics, relevant periods, and clear distinctions between observations, hypotheses, and suggested experiments. It prohibits invented values and causal claims. Currency is INR, and profit means gross profit from the cost column. The response budget is 4,096 tokens. Grounding does not guarantee factual correctness.')
 p('Dataset labels and questions are designated as untrusted data in the prompt. No model-generated SQL, JavaScript, or HTML is executed. Returned text is rendered by React as text. There is no retrieval database or embedding index; the grounding context consists of numerical aggregates, not retrieved documents.')
 h('Modes and failure handling',2)
-p('Without GEMINI_API_KEY, the server uses deterministic keyword routes for categories, regions, channels, margins, trends, and summary questions. Unsupported demo questions explain the limitation. With a key, the server calls the Gemini Generate Content endpoint using GEMINI_MODEL. Provider errors, empty answers, and timeouts produce visible errors rather than being silently relabeled as successful AI output. Requests have a 30-second provider timeout and a 40-second browser timeout.')
+p('Without GEMINI_API_KEY, keyword rules answer supported demo questions and explain their limits. With a key, the server calls Gemini Generate Content using GEMINI_MODEL. Provider errors, empty answers, and timeouts are shown explicitly. Transient failures are retried once within a 30-second provider timeout; the browser timeout is 40 seconds.')
 h('Data handling',2)
-p('Uploaded rows remain in browser memory until an insight question is submitted, at which point the selected records reach this application server for validation. The server forwards only aggregates to Gemini. Credentials are excluded from the frontend and ignored by Git. CSV exports protect formula-like text labels. The public demo uses rule-based responses without a provider key. Same-origin checks are implemented; production-grade quotas and per-user authorization remain outside the prototype.')
+p('Uploaded rows remain in browser memory until an insight question is submitted, at which point the selected records reach this application server for validation. The server forwards only aggregates to Gemini. Credentials are stored in Render environment settings, excluded from the frontend, and ignored by Git. CSV exports protect formula-like text labels. Same-origin checks are implemented; production-grade quotas and per-user authorization remain outside the prototype.')
 
 # 8
 page('Application dashboard')
@@ -186,20 +195,21 @@ p('The output is a conditional calculation. It does not establish that customers
 
 # 11
 page('Testing and evaluation')
-p('The project includes 14 automated tests implemented with the Node.js test runner. The tests use fixed datasets and explicit expected values so that a calculation error produces a reproducible failure. The provider integration is tested using mock HTTP responses. The automated suite and TypeScript checks passed locally, and the production build completed.')
+p('All 15 Node.js tests, TypeScript checks, and both hosting builds passed. Provider payloads and a bounded retry are tested with mocks. A live Render request to gemini-3.5-flash-lite returned a generated answer with the correct sample revenue (INR 4,941,991), gross profit (INR 1,382,887), and leading category (Electronics). This smoke test verifies connectivity and selected facts, not general answer quality.')
 table(['Test group','Coverage','Result'],[['Core metrics','Revenue, cost, profit, margin, AOV, ranking, and month growth','Pass'],['Selection filters','Region and calendar-month filtering relative to dataset dates','Pass'],['CSV input','Round trip, quoted commas, escaped quotes, missing/duplicate headers, malformed quotes','Pass'],['Validation','Impossible dates, blanks, negatives, fractional orders, row and category limits','Pass'],['Edge cases','Zero denominators, empty summaries, and missing calendar months','Pass'],['Scenarios','Known arithmetic and exact restoration of baseline assumptions','Pass'],['Export handling','Formula-like labels escaped in CSV output','Pass'],['AI contract','Grounded demo text, aggregate-only provider payload, invalid requests, provider errors, empty output','Pass']],[1.3,4.5,.75])
 h('Browser verification',2)
 p('Manual browser checks confirmed that selecting West updates revenue to INR 1,520,502 across 72 sample records; the CSV sample uploads with 288 valid records; searching Furniture finds 72 records; the summary question returns a labeled demo response; scenario adjustment and reset update the values; and a business report downloads. Desktop and mobile layouts were inspected. A server/client hydration mismatch found during development was corrected before the final verification.')
 h('Evaluation limits',2)
-p('The tests establish selected numerical and interaction behaviors. They do not establish real-world business usefulness, statistical forecasting accuracy, or language-model reliability. No live Gemini call, user study, large-scale load test, or production security audit was performed. An appropriate next evaluation would use a separately checked business dataset and human ratings of factual support, completeness, and actionability of generated answers.')
+p('A second live browser summary misstated average order value as INR 1,277.52; the verified calculation is INR 1,227.52. This illustrates why generated figures must be checked against the dashboard. No formal answer-quality study, load test, or production security audit was performed. The smoke tests do not establish forecasting accuracy or general model reliability. Availability also depends on provider service and quota.')
 
 # 12
 page('Deployment and limitations')
 h('Local installation',2)
-for t in ['Install Node.js 22.13 or newer and npm.','Clone https://github.com/vru9/genai-business-intelligence and enter the project directory.','Run npm ci, followed by npm run dev. Open the local URL printed in the terminal.','For optional generative mode, copy .dev.vars.example to .dev.vars, set GEMINI_API_KEY and GEMINI_MODEL, and restart.','Run npm test and npm run typecheck to verify the project; npm run build creates the deployment build.']:bullet(t)
+for t in ['Install Node.js 22.13 or newer and npm; clone the GitHub repository below.','Run npm ci, followed by npm run dev. Open the local URL printed in the terminal.','For local Gemini, copy .dev.vars.example to .dev.vars and enter the key. The Next.js runtime uses .env.local instead.','Run npm test and npm run typecheck. For Render, use npm run build:render and npm run start:render.']:bullet(t)
 h('Repository and hosted access',2)
-p('The GitHub repository is public so faculty can inspect the source, sample data, tests, screenshots, and this report. The hosted application uses the Sites platform and is public, so anyone with its link can open the demo. Faculty can also run the repository locally. The public demo works without a provider key using clearly labeled rule-based responses. API keys are not included in the repository.')
-p('Repository: https://github.com/vru9/genai-business-intelligence\nHosted address: https://insight-bi-vruddhi.rajdeepvp273.chatgpt.site')
+p('The GitHub repository and Render web application are public for faculty access. The service uses Node.js 22, a free instance in Singapore, and /api/insights for its health check. GEMINI_API_KEY is saved only in Render environment settings. The free instance may need about a minute to wake after inactivity. No API keys are included in the repository.')
+access=p('Repository: ');link(access,'https://github.com/vru9/genai-business-intelligence')
+access.add_run('\nHosted address: ');link(access,'https://insight-bi-group8.onrender.com')
 h('Current limitations',2)
 for t in ['Uploads and answers are session-memory state and are not saved across refreshes.','The schema uses one currency and does not support negative sales or returns.','The recorded cost definition determines the meaning of profit; taxes and omitted expenses are not inferred.','Monthly comparisons may contain incomplete months and are not adjusted for seasonality.','The scenario model treats every recorded cost as variable and omits price elasticity and fixed expenses.','Demo answers follow limited keyword rules; actual generative answers depend on an external model, credentials, quota, and network availability.','Prompt grounding reduces avoidable errors but cannot guarantee that a model follows every instruction.']:bullet(t)
 h('Suggested demonstration',2)
@@ -213,7 +223,7 @@ p('The project is suitable for demonstrating practical integration of web develo
 h('Future enhancements',2)
 for t in ['Add persistent datasets and saved reports with per-user access controls.','Introduce configurable column mapping, multiple currencies, returns handling, and richer data quality diagnostics.','Evaluate live model responses against a human-reviewed set of business questions and expected facts.','Add statistical forecasting only with backtesting, error measures, and uncertainty estimates.','Extend scenarios with fixed and variable cost separation, demand elasticity, and sensitivity analysis.','Add request quotas, audit trails, and cost monitoring before wider production use.']:bullet(t)
 h('References',2)
-refs=[('Google AI for Developers','Gemini Generate Content API','https://ai.google.dev/api/generate-content'),('React','Learning React and component state','https://react.dev/learn'),('Microsoft','TypeScript Handbook','https://www.typescriptlang.org/docs/handbook/intro.html'),('Cloudflare','Cloudflare Workers documentation','https://developers.cloudflare.com/workers/'),('Node.js','Test runner documentation','https://nodejs.org/api/test.html'),('Project source','Insight BI repository and test suite','https://github.com/vru9/genai-business-intelligence')]
+refs=[('Google AI for Developers','Gemini Generate Content API','https://ai.google.dev/api/generate-content'),('React','Learning React and component state','https://react.dev/learn'),('Microsoft','TypeScript Handbook','https://www.typescriptlang.org/docs/handbook/intro.html'),('Render','Deploy a Next.js app','https://render.com/docs/deploy-nextjs-app'),('Node.js','Test runner documentation','https://nodejs.org/api/test.html'),('Project source','Insight BI repository and test suite','https://github.com/vru9/genai-business-intelligence')]
 for i,(author,title,url) in enumerate(refs,1):
     para=p(f'{i}. {author}. {title}. {url}')
     for r in para.runs:r.font.size=Pt(9)
