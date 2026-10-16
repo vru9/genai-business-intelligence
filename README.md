@@ -20,13 +20,13 @@ A college mini project that turns CSV sales data into business dashboards, groun
 - Monthly revenue/profit chart and revenue share by product category.
 - Region and date filters; searchable, paginated data explorer.
 - CSV upload with strict validation, sample download, and filtered export.
-- Rule-based insight cards and a conversational demo that works without a key.
-- Real Gemini API integration through a server-side endpoint when configured.
+- Live Gemini answers through a server-side endpoint, already enabled on the Render website.
+- Calculated insight cards and a local demo mode for copies without an API key.
 - Price, volume, and unit-cost scenarios with transparent formulas.
 - Downloadable business reports; editable academic project report and PDF.
 - Responsive desktop and mobile layouts, labeled controls, keyboard support.
 
-**AI modes:** without a key, the application uses deterministic demo responses. Actual generative AI uses a server-side Gemini API key and an available model. The Render service uses `gemini-3.5-flash-lite`; a live smoke test returned the correct sample revenue (INR 4,941,991), gross profit (INR 1,382,887), and leading category (Electronics). Provider requests, failure handling, and one bounded retry are also tested with mocks. Generated answers still require human verification. This is not a trained custom ML model, RAG system, or predictive forecasting engine.
+**Gemini is already connected on the [live Render website](https://insight-bi-group8.onrender.com).** Faculty and visitors can open **AI insights** and ask questions without entering an API key. The service uses `gemini-3.5-flash-lite`; a live smoke test returned the correct sample revenue (INR 4,941,991), gross profit (INR 1,382,887), and leading category (Electronics). Provider requests, failure handling, and one bounded retry are also tested with mocks. Generated answers still require human verification. This is not a trained custom ML model, RAG system, or predictive forecasting engine.
 
 ## Run locally
 
@@ -39,9 +39,11 @@ npm ci
 npm run dev
 ```
 
-Open the local address printed in the terminal (normally `http://127.0.0.1:5173`). No API key or database is needed for the sample demo. Uploads are held in memory and reset when you refresh.
+Open the local address printed in the terminal (normally `http://127.0.0.1:5173`). A fresh local copy starts in rule-based demo mode until you configure your own Gemini key. No API key or database is needed for that local sample demo. Uploads are held in memory and reset when you refresh.
 
-### Enable Gemini optionally
+### Gemini setup for local development only
+
+**The hosted Render application is already configured. No setup is needed to use the website.** The following steps are only for developers running a separate copy on their own computer; the deployed API key is kept private on Render and is not included in GitHub.
 
 1. Obtain a Gemini API key through [Google AI Studio](https://aistudio.google.com/apikey).
 2. Copy `.dev.vars.example` to `.dev.vars` in the project root.
@@ -53,7 +55,7 @@ GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
-`.dev.vars` is ignored by Git. Never put a real key in `.dev.vars.example`, frontend code, screenshots, or commits. On Render, add `GEMINI_API_KEY` and `GEMINI_MODEL` in the service's **Environment** settings, then save and redeploy. On Sites, use server environment settings. API usage and billing depend on the provider account. The API key stays on the server.
+`.dev.vars` is ignored by Git. Never put a real key in `.dev.vars.example`, frontend code, screenshots, or commits. The deployed application's key is already saved in Render's **Environment** settings and stays on the server. API usage and billing depend on the provider account.
 
 For the Next.js/Render runtime on your computer, copy `.env.example` to `.env.local` instead. Next.js loads `.env.local`; the Vinext local preview uses `.dev.vars`. Neither secret file is committed.
 
@@ -157,7 +159,7 @@ The Node server listens on `0.0.0.0` and reads `PORT` (default `10000`). Open `h
 1. Open Overview and explain the four KPIs.
 2. Select West and show that every chart and insight uses the same filtered data.
 3. Open Data explorer, upload the sample CSV, and search for Furniture.
-4. Open AI insights and choose “Summarize business performance.” Explain demo mode versus the configured generative mode.
+4. On the Render website, open AI insights and choose “Summarize business performance.” Show the **Gemini response** label and compare the generated figures with the dashboard.
 5. Open Strategy lab and change price/volume assumptions; reset to reproduce baseline values.
 6. Export the business report and explain why a scenario is not a forecast.
 7. Review the test suite and project report.
@@ -168,7 +170,7 @@ The Node server listens on `0.0.0.0` and reads `PORT` (default `10000`). Open `h
 
 Public application: [Insight BI on Render](https://insight-bi-group8.onrender.com)
 
-The repository includes `render.yaml` for a **Free** Node web service in Singapore. Connect this repository as a Render Blueprint, or use these settings for a Web Service:
+The application is deployed as a **Free** Node web service in Singapore with Gemini configured. The repository includes `render.yaml` for reproducing the deployment. The current service uses these settings:
 
 | Setting | Value |
 |---|---|
@@ -181,7 +183,7 @@ The repository includes `render.yaml` for a **Free** Node web service in Singapo
 | Node version | `22.18.0` |
 | Instance type | Free |
 
-Add `GEMINI_API_KEY` as a secret and `GEMINI_MODEL=gemini-3.5-flash-lite` under **Environment** to enable live AI. After deployment, open **AI insights**, confirm the Gemini mode label, and ask a sample-data question. A configured key still needs valid model access and quota. The no-key demo works immediately. Render's free services sleep after 15 minutes without traffic, so allow time for the first request after inactivity. See [Render's free service documentation](https://render.com/docs/free).
+`GEMINI_API_KEY` and `GEMINI_MODEL=gemini-3.5-flash-lite` are already configured in the current service's **Environment** settings. If you create a separate deployment, configure your own key there. Model access, quota, and provider availability affect live answers. Render's free services sleep after 15 minutes without traffic, so allow time for the first request after inactivity. See [Render's free service documentation](https://render.com/docs/free).
 
 The current service was created from the public repository URL. Check the Render **Deploys** page after pushing changes; **Manual Deploy → Deploy latest commit** is available when a fresh deployment is needed. The repository's Blueprint requests deployment after CI checks pass.
 
