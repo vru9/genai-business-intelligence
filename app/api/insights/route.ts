@@ -18,9 +18,12 @@ export function GET() {
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
   // Render terminates HTTPS before forwarding to the Node server.
+  const url = new URL(request.url);
+  const host = request.headers.get("host") || url.host;
+  const protocol = request.headers.get("x-forwarded-proto") || url.protocol.slice(0, -1);
   const expectedOrigin = process.env.RENDER_EXTERNAL_URL
     ? new URL(process.env.RENDER_EXTERNAL_URL).origin
-    : new URL(request.url).origin;
+    : `${protocol}://${host}`;
   if (origin && origin !== expectedOrigin)
     return Response.json(
       { error: "Cross-origin requests are not supported." },
